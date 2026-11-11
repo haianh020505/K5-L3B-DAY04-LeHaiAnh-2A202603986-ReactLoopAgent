@@ -1,6 +1,6 @@
 # Ghi chú phân tích · Day 04
 
-Họ và tên: Lê Hải Anh
+Họ và tên: Lê Hải Anh  
 MSSV: 2A202603986
 
 Cấu hình cả hai lần chạy: `openrouter`, agent và judge cùng `openai/gpt-4o-mini`, `max_steps=8`, snapshot, dataset core 22 case.
