@@ -93,6 +93,18 @@ class ProviderTests(unittest.TestCase):
         self.assertEqual(result['finish'], 'stop')
         self.assertEqual(len(post.call_args.args[2]['messages'][-1]['content']), 2)
 
+    @patch('providers.time.sleep')
+    def test_post_json_retries_429_then_gives_up(self, sleep):
+        import io, urllib.error
+        from providers import post_json
+        err = lambda: urllib.error.HTTPError('u', 429, 'rate', {'Retry-After': '2'}, io.BytesIO(b''))
+        with patch('providers.urllib.request.urlopen', side_effect=[err(), io.BytesIO(b'{"ok": 1}')]):
+            self.assertEqual(post_json('https://x.invalid', {}, {}), {'ok': 1})
+        sleep.assert_called_once_with(2.0)
+        with patch('providers.urllib.request.urlopen', side_effect=[err() for _ in range(3)]):
+            with self.assertRaisesRegex(RuntimeError, '429'):
+                post_json('https://x.invalid', {}, {}, retries=2)
+
 if __name__ == '__main__':
     unittest.main()
 
