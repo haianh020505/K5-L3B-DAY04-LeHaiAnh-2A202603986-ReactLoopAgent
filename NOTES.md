@@ -3,8 +3,6 @@
 Họ và tên: Lê Hải Anh  
 MSSV: 2A202603986
 
-Cấu hình cả hai lần chạy: `openrouter`, agent và judge cùng `openai/gpt-4o-mini`, `max_steps=8`, snapshot, dataset core 22 case.
-
 ## 1. Case được chọn
 
 - ID case: **H6**, nhóm "Nhiều bước và dữ liệu dài".
