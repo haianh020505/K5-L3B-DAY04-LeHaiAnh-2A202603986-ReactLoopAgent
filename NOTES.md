@@ -5,7 +5,7 @@ MSSV: 2A202603986
 
 ## 1. Case được chọn
 
-- ID case: **H6**, nhóm "Nhiều bước và dữ liệu dài".
+- ID case: **H6**
 - Câu hỏi H6: xem status GitHub Actions, tìm incident `h02n9572mx9y` và theo liên kết của nó; incident gộp có nêu nguyên nhân hay chỉ mô tả ảnh hưởng?
 - Câu trả lời của agent (trích): *"Sự cố không nêu rõ nguyên nhân cụ thể mà chỉ tập trung vào việc mô tả ảnh hưởng và các bước khắc phục."* Đây là kết luận **sai**: incident gộp `xr3myzj7ms51` có nêu nguyên nhân (thay đổi cấu hình dịch vụ event-routing nội bộ), nhưng agent chưa từng đọc nó.
 - Điểm ở lần chạy 1: H6 = 60, H1 = 60 (mechanical check giới hạn điểm: "Cần tool calls ở ít nhất 2 model steps khác nhau").
