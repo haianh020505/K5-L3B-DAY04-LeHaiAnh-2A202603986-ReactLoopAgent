@@ -8,7 +8,7 @@ MSSV: 2A202603986
 - ID case: **H6**
 - Câu hỏi H6: xem status GitHub Actions, tìm incident `h02n9572mx9y` và theo liên kết của nó; incident gộp có nêu nguyên nhân hay chỉ mô tả ảnh hưởng?
 - Câu trả lời của agent (trích): *"Sự cố không nêu rõ nguyên nhân cụ thể mà chỉ tập trung vào việc mô tả ảnh hưởng và các bước khắc phục."* Đây là kết luận **sai**: incident gộp `xr3myzj7ms51` có nêu nguyên nhân (thay đổi cấu hình dịch vụ event-routing nội bộ), nhưng agent chưa từng đọc nó.
-- Điểm ở lần chạy 1: H6 = 60, H1 = 60 (mechanical check giới hạn điểm: "Cần tool calls ở ít nhất 2 model steps khác nhau").
+- Điểm ở lần chạy 1: H6 = 60 (mechanical check giới hạn điểm: "Cần tool calls ở ít nhất 2 model steps khác nhau").
 
 ## 2. Bằng chứng trong trace
 
@@ -19,11 +19,6 @@ step1 get_incident_details({'provider': 'github', 'incident_id': 'h02n9572mx9y'}
       -> update: "Please refer to the combined summary in this related incident:
                   https://www.githubstatus.com/incidents/xr3myzj7ms51"
 step2 finish=stop  (không gọi get_incident_details cho xr3myzj7ms51)
-
-H1 (eval_before.json)
-step1 get_incident_details(github, h02n9572mx9y)   -> cùng update dẫn sang xr3myzj7ms51
-step1 get_incident_details(cloudflare, yaa0witbl2me)
-step2 finish=stop  (chỉ dán link xr3myzj7ms51 vào câu trả lời, không đọc)
 ```
 
 Nguyên nhân có thể xảy ra: model gọi song song mọi tool nó nghĩ tới ở step 1, rồi trả lời ngay ở step 2. Link dẫn sang incident khác nằm trong nội dung update (văn bản tự do), không phải trường có cấu trúc, nên model coi đó là "đã có nguồn" thay vì là việc cần làm tiếp. System prompt không có quy tắc nào về việc theo link incident liên quan.
@@ -44,7 +39,7 @@ Nguyên nhân có thể xảy ra: model gọi song song mọi tool nó nghĩ t�
 | Chỉ số | `eval_before.json` | `eval_after.json` |
 |---|---|---|
 | Điểm tổng | 78.77 | 81.82 |
-| Điểm case đã chọn | H6 = 60, H1 = 60 | H6 = 80, H1 = 80 |
+| Điểm case đã chọn | H6 = 60 | H6 = 80 |
 | Số model calls (agent) | 51 | 54 |
 | Token, chi phí nếu có | agent 43 814, judge 40 044 token | agent 56 663, judge 46 010 token |
 
@@ -61,7 +56,7 @@ Kiểm tra mới kích hoạt đúng ở 2 case có link incident chưa đọc l
 
 - Lỗi đã giải quyết:
   - H6: lần 1 kết luận sai "incident không nêu nguyên nhân". Lần 2 đọc `xr3myzj7ms51` và nêu đúng nguyên nhân (thay đổi cấu hình dịch vụ event-routing nội bộ làm dừng giao một số luồng sự kiện), vẫn giữ chi tiết incident gốc `h02n9572mx9y` cùng nguồn của cả hai incident.
-  - H1: lần 2 nêu ảnh hưởng và nguyên nhân phía GitHub từ incident gộp, đối chiếu với Cloudflare `yaa0witbl2me` (Workers Builds) và không suy ra nguyên nhân chung.
+  - H1 (không phải case được chọn, nhưng kiểm tra mới cũng kích hoạt vì gặp cùng incident): lần 2 nêu ảnh hưởng và nguyên nhân phía GitHub từ incident gộp, đối chiếu với Cloudflare `yaa0witbl2me` (Workers Builds) và không suy ra nguyên nhân chung.
   - Cả H1/H6 không còn bị mechanical check giới hạn điểm vì tool calls nay nằm ở 2 model steps (step 1 và step 3).
 - Đóng góp của thay đổi vào điểm tổng (+3.05):
   - H1/H6 tăng +40 điểm cộng dồn, tức khoảng +1.8 điểm tổng.
